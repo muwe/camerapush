@@ -22,9 +22,15 @@ public class StreamingPusher {
     private String mrawfilename = "/sdcard/Movies/yuvdump.h264";
     private boolean mRuning = true;
     private Queue<YUVPackage> mQueue = null;
+    private int mHandler = 0;
 
+    public boolean Init(String liveurl){
+        mHandler = streaminghandler.NewStreamingHandler(liveurl);
 
-    public void Init(){
+        if(0 == mHandler){
+            Log.e("TAG", "New Streaming handler fail!");
+//            return false;
+        }
 
         if(true == mDumpRawData){
             try {
@@ -34,6 +40,7 @@ public class StreamingPusher {
             } catch (Exception e) {
                 System.out.println(e);
             }
+
         }
         mQueue = new LinkedList<YUVPackage>();
         mProcessThread = new Thread() {
@@ -43,6 +50,21 @@ public class StreamingPusher {
             }
         };
         mProcessThread.setName("StreamingPusherThread");
+
+        return true;
+    }
+
+    public void SetPPS(byte[] buffer, int length){
+//        streaminghandler.StreamingHandlerSetPps(mHandler, buffer, length);
+    }
+
+
+    public void SetSPS(byte[] buffer, int length){
+//        streaminghandler.StreamingHandlerSetPps(mHandler,buffer, length);
+    }
+
+    public void SendPPSandSPS(){
+//        streaminghandler.StreamingHandlerSendSPSAndPPs(mHandler);
     }
 
     public void Start(){
@@ -92,19 +114,22 @@ public class StreamingPusher {
 
                 Log.i(TAG, "Processing::size=" + tmpPackage.size+",presentationTimeUs="+
                         tmpPackage.presentationTimeUs+",flags="+tmpPackage.flags);
-                DumpRawData(tmpPackage.buffer);
+                ProcessRawData(tmpPackage);
             }
 
         }
 
     }
 
-    private void DumpRawData(byte[] outData){
+    private void ProcessRawData(YUVPackage Package){
+
+//        streaminghandler.StreamingHandlerPusherRawData(mHandler, Package.buffer, Package.size,
+//                Package.presentationTimeUs,Package.flags);
 
         if(true == mDumpRawData) {
             try {
-                mFileOutputStream.write(outData);
-                Log.i(TAG, "output data size -- > " + outData.length);
+                mFileOutputStream.write(Package.buffer);
+                Log.i(TAG, "output data size -- > " + Package.size);
             } catch (IOException ioe) {
                 Log.w(TAG, "failed writing debug data to file");
                 throw new RuntimeException(ioe);

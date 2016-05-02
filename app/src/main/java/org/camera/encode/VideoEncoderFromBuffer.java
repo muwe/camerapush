@@ -97,7 +97,7 @@ public class VideoEncoderFromBuffer {
 
 		if(true == mEnableStreaming){
 			mStreamingPusher = new StreamingPusher();
-			mStreamingPusher.Init();
+			mStreamingPusher.Init("rtmp://127.0.0.1:1936/live/show");
 			mStreamingPusher.Start();
 		}
 

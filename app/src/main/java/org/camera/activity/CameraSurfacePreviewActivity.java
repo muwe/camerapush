@@ -3,13 +3,12 @@ package org.camera.activity;
 import com.example.camerapreview.R;
 
 import android.app.Activity;
-import android.graphics.Point;
-import android.graphics.SurfaceTexture;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.SurfaceHolder;
-import android.view.ViewGroup.LayoutParams;  
+import android.view.ViewGroup.LayoutParams;
+import android.view.WindowManager;
 
 import org.camera.camera.CameraWrapper;
 import org.camera.camera.CameraWrapper.CamOpenOverCallback;
@@ -29,8 +28,16 @@ public class CameraSurfacePreviewActivity extends Activity implements CamOpenOve
 		setContentView(R.layout.activity_camera_preview);
 		initUI();
 		initViewParams();
+		getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 	}
-	
+
+	@Override
+	protected void onDestroy(){
+		Log.i(TAG, "onDestroy");
+		super.onDestroy();
+		getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+	}
+
 	@Override  
     protected void onStart() {  
 		Log.i(TAG, "onStart");

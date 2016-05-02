@@ -7,7 +7,7 @@ public class YUVPackage {
 
     public byte[] buffer;
     public int size;
-    public long presentationTimeUs;
+    public int presentationTimeUs;
     public int flags;
 
 
@@ -22,7 +22,7 @@ public class YUVPackage {
             byte[] newbuffer, int newSize, long newTimeUs, int newFlags) {
         buffer = newbuffer;
         size = newSize;
-        presentationTimeUs = newTimeUs;
+        presentationTimeUs = (int)newTimeUs;
         flags = newFlags;
     }
 

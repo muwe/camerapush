@@ -6,6 +6,8 @@ import android.util.AttributeSet;
 import android.util.Log;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
+import android.view.WindowManager;
+
 import org.camera.camera.CameraWrapper;
 
 public class CameraSurfacePreview extends SurfaceView implements SurfaceHolder.Callback {
@@ -27,7 +29,8 @@ public class CameraSurfacePreview extends SurfaceView implements SurfaceHolder.C
 
 	@Override
 	public void surfaceCreated(SurfaceHolder holder) {
-		Log.i(TAG, "surfaceCreated...");  
+		Log.i(TAG, "surfaceCreated...");
+
 	}
 
 	@Override
