@@ -19,10 +19,11 @@ public class YUVPackage {
     }
 
     public void set(
-            byte[] newbuffer, int newSize, long newTimeUs, int newFlags) {
+            byte[] newbuffer, int newSize, int newTimeUs, int newFlags) {
         buffer = newbuffer;
         size = newSize;
-        presentationTimeUs = (int)newTimeUs;
+
+        presentationTimeUs = newTimeUs;
         flags = newFlags;
     }
 

@@ -5,16 +5,21 @@ package org.camera.pusher;
  */
 public class streaminghandler {
 
+    public static final int H264_RAW_PUSHER_FIRSTFRAME_FLAG = 0x10000001;   //first frame flag
+
+
+
+
     /** Native methods, implemented in jni folder */
     public static native int NewStreamingHandler(String liveurl);
-    //    public static native boolean StreamingHandlerInit(int object, byte[] HeadData);
-//    public static native void StreamingHandlerSetSPs(int object, byte[] Data, int length);
-//    public static native void StreamingHandlerSetPps(int object, byte[] Data, int length);
-//    public static native void StreamingHandlerSendSPSAndPPs(int object);
-//    public static native void StreamingHandlerPusherRawData(int object, byte[] Data, int length, int ts, int flag);
-//    //    public static native float PitchAnalyzerGetPitch(int object, long StartTime, long Duration);
-//    //    public static native int PitchAnalyzerGetFrequency(int object, long StartTime, long Duration);
-//    public static native void DelStreamingHandler(int object);
+    //public static native boolean StreamingHandlerInit(int object, byte[] HeadData);
+    public static native void StreamingHandlerSetSPs(int object, byte[] Data, int length);
+    public static native void StreamingHandlerSetPps(int object, byte[] Data, int length);
+    public static native void StreamingHandlerSendSPSAndPPs(int object);
+    public static native void StreamingHandlerPusherRawData(int object, byte[] Data, int length, int ts, int flag);
+    //    public static native float PitchAnalyzerGetPitch(int object, long StartTime, long Duration);
+    //    public static native int PitchAnalyzerGetFrequency(int object, long StartTime, long Duration);
+    public static native void DelStreamingHandler(int object);
 
     static {
         System.loadLibrary("rtmp");

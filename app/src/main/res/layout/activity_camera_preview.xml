@@ -3,18 +3,56 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent" >
 
-    <FrameLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerHorizontal="true"
-        android:layout_centerVertical="true" >
-        
-<!--              <org.camera.preview.CameraSurfacePreview 
-            android:id="@+id/camera_surfaceview" -->
-            <org.camera.preview.CameraTexturePreview 
-            android:id="@+id/camera_textureview"
-            android:layout_width="0dip"  
-            android:layout_height="0dip" />  
-    </FrameLayout>
+    <!--<FrameLayout-->
+        <!--android:layout_width="wrap_content"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:layout_centerHorizontal="true"-->
+        <!--android:layout_centerVertical="true" >-->
+        <!-- -->
+<!--&lt;!&ndash;              <org.camera.preview.CameraSurfacePreview -->
+            <!--android:id="@+id/camera_surfaceview" &ndash;&gt;-->
+            <!--<org.camera.preview.CameraTexturePreview -->
+            <!--android:id="@+id/camera_textureview"-->
+            <!--android:layout_width="0dip"  -->
+            <!--android:layout_height="0dip" />  -->
+    <!--</FrameLayout>-->
+
+    <LinearLayout android:id="@+id/control_panel"
+        android:layout_width="match_parent"
+        android:layout_height="88dp"
+        android:gravity="center"
+        android:orientation="horizontal"
+        style="?android:attr/buttonBarStyle"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentStart="true">
+
+        <Button
+            android:id="@+id/btn_start"
+            android:layout_width="65dip"
+            android:layout_height="wrap_content"
+            android:text="start" />
+
+        <Button
+            android:id="@+id/btn_stop"
+            android:layout_width="65dip"
+            android:layout_height="wrap_content"
+            android:text="stop" />
+
+        <Button
+            android:id="@+id/btn_switch"
+            android:layout_width="65dip"
+            android:layout_height="wrap_content"
+            android:text="switch" />
+    </LinearLayout>
+
+    <SurfaceView
+        android:id="@+id/surfaceview"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_above="@id/control_panel"
+        android:layout_marginLeft="50dip"
+        android:layout_marginRight="50dip" />
+
+
 
 </RelativeLayout>

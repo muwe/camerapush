@@ -93,9 +93,9 @@ public class CameraWrapper {
 	public void doStopCamera() {
 		Log.i(TAG, "doStopCamera");
 		if (this.mCamera != null) {
-			mCameraPreviewCallback.close();
 			this.mCamera.setPreviewCallback(null);
 			this.mCamera.stopPreview();
+			mCameraPreviewCallback.close();
 			this.mIsPreviewing = false;
 			this.mPreviewRate = -1f;
 			this.mCamera.release();

@@ -6,8 +6,8 @@ import android.util.AttributeSet;
 import android.util.Log;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
-import android.view.WindowManager;
 
+import org.camera.activity.R;
 import org.camera.camera.CameraWrapper;
 
 public class CameraSurfacePreview extends SurfaceView implements SurfaceHolder.Callback {
@@ -15,12 +15,14 @@ public class CameraSurfacePreview extends SurfaceView implements SurfaceHolder.C
 	public static final String TAG = "CameraSurfacePreview";
 	SurfaceHolder mSurfaceHolder;
 	Context mContext;
-	CameraWrapper mCameraWrapper;
+	SurfaceView mSurfaceView;
 
 	@SuppressWarnings("deprecation")
 	public CameraSurfacePreview(Context context, AttributeSet attrs) {
 		super(context, attrs);
-		this.mSurfaceHolder = getHolder();
+		mSurfaceView=(SurfaceView)this.findViewById(R.id.surfaceview);
+
+		this.mSurfaceHolder = mSurfaceView.getHolder();
 		this.mContext = getContext();
 		this.mSurfaceHolder.setFormat(PixelFormat.TRANSPARENT);
 		this.mSurfaceHolder.setType(SurfaceHolder.SURFACE_TYPE_PUSH_BUFFERS);  

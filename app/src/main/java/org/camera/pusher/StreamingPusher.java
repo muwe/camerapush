@@ -15,7 +15,6 @@ import java.util.Queue;
 public class StreamingPusher {
     private String TAG = "StreamingPusher";
 
-
     private FileOutputStream mFileOutputStream=null;
     private boolean mDumpRawData = true;
     private Thread mProcessThread = null;
@@ -55,16 +54,16 @@ public class StreamingPusher {
     }
 
     public void SetPPS(byte[] buffer, int length){
-//        streaminghandler.StreamingHandlerSetPps(mHandler, buffer, length);
+        streaminghandler.StreamingHandlerSetPps(mHandler, buffer, length);
     }
 
 
     public void SetSPS(byte[] buffer, int length){
-//        streaminghandler.StreamingHandlerSetPps(mHandler,buffer, length);
+        streaminghandler.StreamingHandlerSetSPs(mHandler, buffer, length);
     }
 
     public void SendPPSandSPS(){
-//        streaminghandler.StreamingHandlerSendSPSAndPPs(mHandler);
+        streaminghandler.StreamingHandlerSendSPSAndPPs(mHandler);
     }
 
     public void Start(){
@@ -74,6 +73,11 @@ public class StreamingPusher {
 
     public void Stop(){
         mRuning = false;
+        try {
+            mProcessThread.join();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
 //        mProcessThread.stop();
 
     }
@@ -90,6 +94,12 @@ public class StreamingPusher {
                 System.out.println(e);
             }
         }
+
+        if(mHandler != 0){
+            streaminghandler.DelStreamingHandler(mHandler);
+            mHandler = 0;
+        }
+
         mQueue = null;
     }
 
@@ -112,9 +122,10 @@ public class StreamingPusher {
                 }
             }else{
 
-                Log.i(TAG, "Processing::size=" + tmpPackage.size+",presentationTimeUs="+
-                        tmpPackage.presentationTimeUs+",flags="+tmpPackage.flags);
+                Log.i(TAG, "Processing::size=" + tmpPackage.size + ",presentationTimeUs=" +
+                        tmpPackage.presentationTimeUs + ",flags=" + tmpPackage.flags);
                 ProcessRawData(tmpPackage);
+
             }
 
         }
@@ -123,10 +134,17 @@ public class StreamingPusher {
 
     private void ProcessRawData(YUVPackage Package){
 
-//        streaminghandler.StreamingHandlerPusherRawData(mHandler, Package.buffer, Package.size,
-//                Package.presentationTimeUs,Package.flags);
 
-        if(true == mDumpRawData) {
+        if(mRuning){
+            streaminghandler.StreamingHandlerPusherRawData(mHandler, Package.buffer, Package.size,
+                    Package.presentationTimeUs,Package.flags);
+        }
+
+
+
+
+
+        if(true == mDumpRawData && mRuning) {
             try {
                 mFileOutputStream.write(Package.buffer);
                 Log.i(TAG, "output data size -- > " + Package.size);

@@ -31,7 +31,7 @@ public class VideoEncoderFromBuffer {
 	private static final int BIT_RATE = CameraWrapper.IMAGE_HEIGHT * CameraWrapper.IMAGE_WIDTH * 3 * 8 * FRAME_RATE / COMPRESS_RATIO; // bit rate CameraWrapper.
 	private int mWidth;
 	private int mHeight;
-	private MediaCodec mMediaCodec;
+	private MediaCodec mMediaCodec = null;
 	private MediaMuxer mMuxer;
 	private BufferInfo mBufferInfo;
 	private int mTrackIndex = -1;
@@ -42,7 +42,9 @@ public class VideoEncoderFromBuffer {
 	private long mStartTime = 0;
 	private boolean mDumpRawData = true;
 	private boolean mEnableStreaming = true;
-	private StreamingPusher mStreamingPusher;
+	private StreamingPusher mStreamingPusher = null;
+	private long mBaseTime=0;
+
 
 	@SuppressLint("NewApi")
 	public VideoEncoderFromBuffer(int width, int height) {
@@ -98,6 +100,13 @@ public class VideoEncoderFromBuffer {
 		if(true == mEnableStreaming){
 			mStreamingPusher = new StreamingPusher();
 			mStreamingPusher.Init("rtmp://127.0.0.1:1936/live/show");
+			byte[] sps = {1,2,3,4,5};
+			mStreamingPusher.SetSPS(sps, sps.length);
+
+			byte[] pps = {1,2,3,4,5};
+			mStreamingPusher.SetPPS(pps, pps.length);
+
+
 			mStreamingPusher.Start();
 		}
 
@@ -222,13 +231,19 @@ public class VideoEncoderFromBuffer {
 
 					if(true == mEnableStreaming){
 
-
 						YUVPackage tmpPackage = new YUVPackage();
 
-						tmpPackage.set(outData, mBufferInfo.size, mBufferInfo.presentationTimeUs,
+						int ts = 0;
+						if(mBaseTime == 0){
+							mBaseTime = mBufferInfo.presentationTimeUs;
+						}else{
+							ts = (int)((mBufferInfo.presentationTimeUs - mBaseTime)/1000);
+						}
+
+						tmpPackage.set(outData, mBufferInfo.size, ts,
 								mBufferInfo.flags);
-						Log.d(TAG, "insert package::size=" + mBufferInfo.size + ", presentationTimeUs=" +
-								mBufferInfo.presentationTimeUs + ", flags=" + mBufferInfo.flags);
+						Log.d(TAG, "insert package::size=" + mBufferInfo.size + ", ts=" +
+								ts + ", flags=" + mBufferInfo.flags);
 
 						mStreamingPusher.InsetData(tmpPackage);
 					}
@@ -250,9 +265,10 @@ public class VideoEncoderFromBuffer {
 
 	@SuppressLint("NewApi")
 	public void close() {
-		if(true == mDumpRawData) {
+		if(true == mDumpRawData && mFileOutputStream != null) {
 			try {
 				mFileOutputStream.close();
+				mFileOutputStream = null;
 			} catch (IOException e) {
 				System.out.println(e);
 			} catch (Exception e) {
@@ -260,7 +276,7 @@ public class VideoEncoderFromBuffer {
 			}
 		}
 
-		if(true == mEnableStreaming){
+		if(true == mEnableStreaming && mStreamingPusher != null){
 			mStreamingPusher.Stop();
 			mStreamingPusher.Uninit();
 			mStreamingPusher = null;
@@ -268,8 +284,12 @@ public class VideoEncoderFromBuffer {
 
 		Log.i(TAG, "close()");
 		try {
-			mMediaCodec.stop();
-			mMediaCodec.release();
+			if(mMediaCodec != null){
+				mMediaCodec.stop();
+				mMediaCodec.release();
+				mMediaCodec = null;
+			}
+
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
