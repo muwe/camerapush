@@ -16,7 +16,7 @@ public class StreamingPusher {
     private String TAG = "StreamingPusher";
 
     private FileOutputStream mFileOutputStream=null;
-    private boolean mDumpRawData = true;
+    private boolean mDumpRawData = false;
     private Thread mProcessThread = null;
     private String mrawfilename = "/sdcard/Movies/yuvdump.h264";
     private boolean mRuning = true;
@@ -104,7 +104,11 @@ public class StreamingPusher {
     }
 
     public void InsetData(YUVPackage newPackage){
+
         mQueue.add(newPackage);
+        Log.d(TAG, "insert package::size=" + newPackage.size + ", ts=" +
+                newPackage.presentationTimeUs + ", flags=" + newPackage.flags+ "queue size="+ mQueue.size());
+
     }
 
     private void Processing(){
@@ -116,15 +120,16 @@ public class StreamingPusher {
             if(tmpPackage == null){
 
                 try {
-                    Thread.sleep(30);
+                    Thread.sleep(15);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
             }else{
 
                 Log.i(TAG, "Processing::size=" + tmpPackage.size + ",presentationTimeUs=" +
-                        tmpPackage.presentationTimeUs + ",flags=" + tmpPackage.flags);
+                        tmpPackage.presentationTimeUs + ",flags=" + tmpPackage.flags + "queue size=" + mQueue.size());
                 ProcessRawData(tmpPackage);
+                Log.i(TAG, "Processing::end");
 
             }
 

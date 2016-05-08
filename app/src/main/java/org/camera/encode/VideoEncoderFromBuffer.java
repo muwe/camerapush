@@ -45,7 +45,6 @@ public class VideoEncoderFromBuffer {
 	private StreamingPusher mStreamingPusher = null;
 	private long mBaseTime=0;
 
-
 	@SuppressLint("NewApi")
 	public VideoEncoderFromBuffer(int width, int height) {
 		Log.i(TAG, "VideoEncoder()");
@@ -76,6 +75,9 @@ public class VideoEncoderFromBuffer {
 		if (VERBOSE)
 			Log.d(TAG, "format: " + mediaFormat);
 		mMediaCodec = MediaCodec.createByCodecName(codecInfo.getName());
+		mediaFormat.setInteger(MediaFormat.KEY_FRAME_RATE, 15);
+		mediaFormat.setInteger(MediaFormat.KEY_I_FRAME_INTERVAL, 2);
+
 		mMediaCodec.configure(mediaFormat, null, null,
 				MediaCodec.CONFIGURE_FLAG_ENCODE);
 		mMediaCodec.start();
@@ -99,7 +101,7 @@ public class VideoEncoderFromBuffer {
 
 		if(true == mEnableStreaming){
 			mStreamingPusher = new StreamingPusher();
-			mStreamingPusher.Init("rtmp://127.0.0.1:1936/live/show");
+			mStreamingPusher.Init("rtmp://192.168.1.6:1936/live/show");
 			byte[] sps = {1,2,3,4,5};
 			mStreamingPusher.SetSPS(sps, sps.length);
 
@@ -146,6 +148,7 @@ public class VideoEncoderFromBuffer {
 			ByteBuffer inputBuffer = inputBuffers[inputBufferIndex];
 			inputBuffer.clear();
 			inputBuffer.put(mFrameData);
+
 			mMediaCodec.queueInputBuffer(inputBufferIndex, 0,
 					mFrameData.length, System.nanoTime() / 1000, 0);
 		} else {
@@ -242,8 +245,6 @@ public class VideoEncoderFromBuffer {
 
 						tmpPackage.set(outData, mBufferInfo.size, ts,
 								mBufferInfo.flags);
-						Log.d(TAG, "insert package::size=" + mBufferInfo.size + ", ts=" +
-								ts + ", flags=" + mBufferInfo.flags);
 
 						mStreamingPusher.InsetData(tmpPackage);
 					}
